@@ -1,0 +1,19 @@
+name: Unzip Code
+on: [push]
+jobs:
+  unzip:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Unzip project.zip
+        run: |
+          unzip project.zip -d .
+          rm project.zip
+      - name: Commit changes
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add .
+          git commit -m "Unzipped project.zip"
+          git push
