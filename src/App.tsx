@@ -21,6 +21,8 @@ function App() {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [apiUrl, setApiUrl] = useState<string>('');
+  const [totalResults, setTotalResults] = useState<number>(0);
+  const [currentSize, setCurrentSize] = useState<number>(25);
 
   const handleSearch = async (newFilters: SearchFilters) => {
     try {
@@ -30,17 +32,21 @@ function App() {
       if (JSON.stringify({ ...filters, page: 1 }) !== JSON.stringify({ ...newFilters, page: 1 })) {
         setResults([]);
         newFilters.page = 1;
+        setCurrentSize(25);
       }
 
-      const generatedUrl = `https://api.pullpush.io/reddit/submission/search?html_decode=True&q=${encodeURIComponent(newFilters.query)}&size=25`;
+      const generatedUrl = `https://api.pullpush.io/reddit/submission/search?html_decode=True&q=${encodeURIComponent(newFilters.query)}&size=${currentSize}`;
       setApiUrl(generatedUrl);
 
-      const data = await searchReddit(newFilters);
+      const data = await searchReddit({
+        ...newFilters,
+        size: currentSize
+      });
       
       setResults(prev => 
         newFilters.page === 1 ? data.data : [...prev, ...data.data]
       );
-      
+      setTotalResults(data.metadata.total);
       setFilters(newFilters);
     } catch (err) {
       setError(err as Error);
@@ -50,7 +56,8 @@ function App() {
   };
 
   const handleLoadMore = () => {
-    if (!loading && results.length > 0) {
+    if (!loading && results.length > 0 && results.length < totalResults) {
+      setCurrentSize(prev => prev + 25);
       handleSearch({ ...filters, page: filters.page + 1 });
     }
   };
@@ -80,6 +87,8 @@ function App() {
           onLoadMore={handleLoadMore}
           searchQuery={filters.query}
           apiUrl={apiUrl}
+          totalResults={totalResults}
+          currentSize={currentSize}
         />
       </main>
     </div>

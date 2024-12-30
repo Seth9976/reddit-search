@@ -11,9 +11,19 @@ interface ResultsListProps {
   onLoadMore: () => void;
   searchQuery: string;
   apiUrl: string;
+  totalResults: number;
+  currentSize: number;
 }
 
-export default function ResultsList({ results, loading, onLoadMore, searchQuery, apiUrl }: ResultsListProps) {
+export default function ResultsList({ 
+  results, 
+  loading, 
+  onLoadMore, 
+  searchQuery, 
+  apiUrl,
+  totalResults,
+  currentSize
+}: ResultsListProps) {
   const { ref, inView } = useInView();
 
   React.useEffect(() => {
@@ -50,7 +60,7 @@ export default function ResultsList({ results, loading, onLoadMore, searchQuery,
         <>
           <div className="mb-4 flex justify-between items-center">
             <div className="text-gray-700">
-              找到 {results.length} 条搜索结果
+              显示 {results.length} / {totalResults} 条搜索结果
             </div>
             <button
               onClick={exportToCsv}
@@ -61,15 +71,22 @@ export default function ResultsList({ results, loading, onLoadMore, searchQuery,
             </button>
           </div>
           
-          <div className="mb-4">
+          <div className="mb-4 space-y-2">
             <a 
               href={apiUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-800 underline"
+              className="text-blue-600 hover:text-blue-800 underline block"
             >
-              Generated API URL
+              Generated API URL (当前加载 {currentSize} 条)
             </a>
+            
+            <div className="w-full bg-gray-200 rounded-full h-2.5">
+              <div 
+                className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
+                style={{ width: `${(results.length / totalResults) * 100}%` }}
+              />
+            </div>
           </div>
         </>
       )}
