@@ -2,7 +2,7 @@ import React from 'react';
 import { format } from 'date-fns';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { RedditItem } from '../types';
-import { HighlightText } from '../components/HighlightText';
+import HighlightText from './HighlightText';
 
 interface ResultCardProps {
   item: RedditItem;

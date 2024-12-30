@@ -10,9 +10,10 @@ interface ResultsListProps {
   loading: boolean;
   onLoadMore: () => void;
   searchQuery: string;
+  apiUrl: string;
 }
 
-export default function ResultsList({ results, loading, onLoadMore, searchQuery }: ResultsListProps) {
+export default function ResultsList({ results, loading, onLoadMore, searchQuery, apiUrl }: ResultsListProps) {
   const { ref, inView } = useInView();
 
   React.useEffect(() => {
@@ -46,15 +47,31 @@ export default function ResultsList({ results, loading, onLoadMore, searchQuery 
   return (
     <div className="max-w-4xl mx-auto p-4">
       {results.length > 0 && (
-        <div className="mb-4 flex justify-end">
-          <button
-            onClick={exportToCsv}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-          >
-            <Download className="h-5 w-5" />
-            Export to CSV
-          </button>
-        </div>
+        <>
+          <div className="mb-4 flex justify-between items-center">
+            <div className="text-gray-700">
+              找到 {results.length} 条搜索结果
+            </div>
+            <button
+              onClick={exportToCsv}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              <Download className="h-5 w-5" />
+              Export to CSV
+            </button>
+          </div>
+          
+          <div className="mb-4">
+            <a 
+              href={apiUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-800 underline"
+            >
+              Generated API URL
+            </a>
+          </div>
+        </>
       )}
 
       <div className="space-y-4">
